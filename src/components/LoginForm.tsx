@@ -1,12 +1,10 @@
 "use client";
-import { setAuthenticated } from "@/store/slices/userSlice";
+import AuthContext from "@/store/AuthContext";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-
 const LoginForm = () => {
   const [user, setUser] = useState({
     email: "",
@@ -14,8 +12,7 @@ const LoginForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const dispatch = useDispatch();
+  const { setAuthenticated } = useContext(AuthContext);
 
   const submitHandler = async (e: any) => {
     e.preventDefault();
@@ -28,10 +25,9 @@ const LoginForm = () => {
         data: user,
       });
 
-      console.log("Loign success", response.data);
       toast.success("Succesfully loged in");
-      Cookies.set("auth", "true");
-      dispatch(setAuthenticated(true));
+      Cookies.set("auth", response.data.token);
+      setAuthenticated(true);
       router.push("/account");
     } catch (error: any) {
       console.log("Login failed", error.message);

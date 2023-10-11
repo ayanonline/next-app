@@ -1,20 +1,13 @@
 "use client";
+import AuthContext from "@/store/AuthContext";
 import Link from "next/link";
-import Cookies from "js-cookie";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { authorizeUser } from "@/store/actions/authorizeUser";
+import { useContext } from "react";
 
-const Header = () => {
+export default function Header() {
   const pathname = usePathname();
-  const { isAuthenticated } = useSelector((state: any) => state.user);
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const dispatch: any = useDispatch();
 
-  useEffect(() => {
-    if (Cookies.get("auth")) dispatch(authorizeUser());
-  }, []);
+  const { authenticated } = useContext(AuthContext);
 
   return (
     <header className="bg-black text-white p-4">
@@ -22,7 +15,7 @@ const Header = () => {
         <Link href="/" className={pathname === "/" ? "underline" : ""}>
           Home
         </Link>
-        {isAuthenticated ? (
+        {authenticated ? (
           <Link
             href="/account"
             className={pathname === "/account" ? "underline" : ""}
@@ -40,6 +33,4 @@ const Header = () => {
       </nav>
     </header>
   );
-};
-
-export default Header;
+}
